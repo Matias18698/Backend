@@ -1,0 +1,37 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Nuevo Alumno</title>
+</head>
+<body>
+    <h1>Crear Nuevo Alumno</h1>
+    <form action="/ruta-del-endpoint-de-creacion" method="POST">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required><br>
+        
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" name="apellido" required><br>
+        
+        <label for="numero">Número:</label>
+        <input type="text" id="numero" name="numero" required><br>
+        
+        <label for="carrera">Carrera:</label>
+        <input type="text" id="carrera" name="carrera" required><br>
+        
+        <label for="correo">Correo:</label>
+        <input type="email" id="correo" name="correo" required><br>
+        
+        <label for="status">Status:</label>
+        <select id="status" name="status" required>
+            <option value="Regular">Regular</option>
+            <option value="No regular">No regular</option>
+        </select><br>
+        
+        <button type="submit">Crear Alumno</button>
+    </form>
+</body>
+</html>

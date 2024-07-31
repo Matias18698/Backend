@@ -1,0 +1,85 @@
+{
+    "Alumno":{
+        "nombre": {
+            "type": "String",
+            "required": true
+        },
+        "apellido": {
+            "type": "String",
+            "required": true
+        },
+        "carrera": {
+            "type": "String",
+            "required": true
+        },
+        "numero": {
+            "type": "Number",
+            "required": true
+        },
+        "correo": {
+            "type":"String",
+            "required": true
+        },
+        "status":{
+            "type": "String",
+            "required": true,
+            "enum": [
+                "Regular",
+                "No Regular"
+            ]
+        }
+    },
+
+    "Votacion":{
+        "nombre":{
+            "type":"String",
+            "require":true
+        },
+        "aforo":{
+            "type":"Number",
+            "require":true
+        },
+        "description":{
+            "type":"String",
+            "require":true
+        },
+        "tiempoMaximoDeVotacion":{
+            "type":"Number",
+            "require":true
+        },
+        "status":{
+            "type": "String",
+            "required": true,
+            "enum": [
+                "Votacion Abierta",
+                "Votacion Cerrada"
+            ]
+        }
+    },
+
+    "Asamblea":{
+
+        "nombre_asamblea":{
+            "type": "String",
+            "required": true
+        },
+        "fecha_inicio":{
+            "type": "Date",
+            "required": true
+        },
+        "fecha_fin":{
+            "type": "Date",
+            "required": true
+        },
+        "alumno":{
+            "type": "Schema.ObjectId",
+            "required": true,
+            "ref": "alumno"
+        },
+        "votacion":{
+            "type": "Schema.ObjectId",
+            "required": true,
+            "ref": "votacion"
+        }
+    }
+}
