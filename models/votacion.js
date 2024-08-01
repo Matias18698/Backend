@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const asamblea = require('./asamblea');
-const voto = require('./voto');
+const user = require('./user');
 
 const VotacionSchema = new Schema({
     titulo: { type: String, required: true },
@@ -20,10 +20,17 @@ const VotacionSchema = new Schema({
         ref: asamblea,
         required: true
     },
-    votos:[{
+
+    conteo:[{
+        type: Number,
+        required: false,
+    }],
+
+    users:[{
         type: Schema.Types.ObjectId,
-        ref: voto
-    }]
+        required: false,
+        ref: user
+    }],
 });
 
 

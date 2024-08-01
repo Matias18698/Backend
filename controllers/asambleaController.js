@@ -1,6 +1,7 @@
 const Asamblea = require('../models/asamblea');
 const { query } = require('express');
 const Alumno = require('../models/alumno');
+const Votacion = require('../models/votacion');
 
 const testBloqueo = (alumno, votacion, newAsamblea, jsonNow, fecha_inicio, fecha_fin, res) => {
     Alumno.findById(alumno).where('status', 'Regular').exec((error, cliente) => {
@@ -44,9 +45,16 @@ const createAsamblea = (req, res) => {
     if(inicio > fin){
         return res.status(400).send({ message: 'Error, fecha de inicio es después de la fecha de fin'})
     }
-    else if(inicio < now || inicio > nextWeek || fin < now || fin > nextWeek){
-        return res.status(400).send({ message: 'Error, fechas están fuera del periodo'})
+    else if((fin - inicio)/hourOnMilS > 6){
+        return res.status(400).send({ message: 'Error, asamblea está fuera del rango de 6 horas'}) 
     }
+    else if(inicio < now || inicio > nextWeek || fin < now || fin > nextWeek){
+        return res.status(400).send({ message: 'Error, fechas están fuera del periodo de una semana'})
+    }
+    // else if((fin-inicio)/hourOnMilS>Votacion.findByID(votacion).get('tiempoMaximoDeAsamblea')){
+    //     return res.status(400).send({ message: 'Error, Supera el tiempo maximo de asamblea'})
+    // }
+    // else testBloqueo(alumnos, votacion, newAsamblea, jsonNow, fecha_inicio, fecha_fin, res)
 
     else {
         newAsamblea.save((error, asambleaGuardada) => {
@@ -61,7 +69,35 @@ const createAsamblea = (req, res) => {
 
 
 
-   
+    // Crear la votación y guardarla en la base de datos
+    // const nuevaVotacion = new Votacion({
+    //     // Aquí debes llenar los campos de la votación según tu modelo de datos
+    //     // Por ejemplo:
+    //     titulo: 'Votación para la asamblea',
+    //     descripcion: 'Esta es una votación relacionada con la asamblea',
+    //     opciones: ['Opción 1', 'Opción 2', 'Opción 3'],
+    //     // Puedes agregar más campos según lo que necesites
+    // });
+
+    // nuevaVotacion.save((error, votacionGuardada) => {
+    //     if (error) {
+    //         console.error('Error al crear la votación:', error);
+    //         // Manejar el error adecuadamente, puede ser lanzando una excepción, retornando un código de error, etc.
+    //         return;
+    //     }
+    //          // Asignar el ID de la votación a la asamblea y guardar la asamblea
+    //         newAsamblea.votacion = votacionGuardada._id;
+    //         newAsambleaAsamblea.save((error, asambleaGuardada) => {
+    //         if (error) {
+    //             console.error('Error al crear la asamblea:', error);
+    //             // Manejar el error adecuadamente, puede ser lanzando una excepción, retornando un código de error, etc.
+    //             return;
+    //         }
+    //         console.log('Asamblea creada exitosamente con votación');
+    //     });
+    //     });
+
+
 }
 
 
@@ -78,9 +114,6 @@ const getAsambleas = (req, res) => {
     }).populate('votaciones');
 }
 
-
-
-
 const updateAsamblea = (req, res) => {
     const { id } = req.params
     Asamblea.findByIdAndUpdate(id, req.body, (error, asamblea) => {
@@ -95,7 +128,8 @@ const updateAsamblea = (req, res) => {
 }
 
 const deleteAsamblea = (req, res) => {
-    const { id } = req.params
+    const { id } = req.params;
+
     Asamblea.findByIdAndDelete(id, (error, asamblea) => {
         if (error) {
             return res.status(400).send({ message: "No se ha podido eliminar el asamblea" })
@@ -103,6 +137,16 @@ const deleteAsamblea = (req, res) => {
         if (!asamblea) {
             return res.status(404).send({ message: "No se ha podido encontrar un asamblea" })
         }
+        //revisa las votaciones que tiene la asamblea
+        asamblea.votaciones.forEach(votacion => {
+            //por cada votacion, busca la id y la elimina.
+            Votacion.findByIdAndDelete(votacion, (error, votacion) => {
+                if (error) {
+                    return res.status(400).send({ message: "No se ha podido eliminar el asamblea" })
+                }
+            });
+        });
+
         return res.status(200).send({ message: "Se ha eliminado el asamblea de forma correcta" })
     })
 }
